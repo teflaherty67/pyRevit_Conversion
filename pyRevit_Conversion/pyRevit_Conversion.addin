@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>pyRevit_Conversion - Command 1</Text>
+    <Description>Some description</Description>
+    <Assembly>pyRevit_Conversion\pyRevit_Conversion.dll</Assembly>
+    <FullClassName>pyRevit_Conversion.Command1</FullClassName>
+    <ClientId>23a7b3e3-476a-4295-9e55-e4b05178f101</ClientId>
+    <VendorId>com.YOUR COMPANY NAME</VendorId>
+    <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
+  </AddIn>
+  <AddIn Type="Command">
+    <Text>pyRevit_Conversion - Command 2</Text>
+    <Description>Some description</Description>
+    <Assembly>pyRevit_Conversion\pyRevit_Conversion.dll</Assembly>
+    <FullClassName>pyRevit_Conversion.Command2</FullClassName>
+    <ClientId>0ce01956-8a57-446f-81ee-2aef07f137e0</ClientId>
+    <VendorId>com.YOUR COMPANY NAME</VendorId>
+    <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>pyRevit_Conversion</Name>
+    <Assembly>pyRevit_Conversion\pyRevit_Conversion.dll</Assembly>
+    <FullClassName>pyRevit_Conversion.App</FullClassName>
+    <ClientId>9a6ae893-62fc-4d50-8e37-e532890d13dc</ClientId>
+    <VendorId>com.YOUR COMPANY NAME</VendorId>
+    <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
+  </AddIn>
+</RevitAddIns>
