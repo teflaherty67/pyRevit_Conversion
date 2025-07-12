@@ -4,7 +4,7 @@
     <Text>pyRevit_Conversion - Command 1</Text>
     <Description>Some description</Description>
     <Assembly>pyRevit_Conversion\pyRevit_Conversion.dll</Assembly>
-    <FullClassName>pyRevit_Conversion.Command1</FullClassName>
+    <FullClassName>pyRevit_Conversion.cmdSelectSheets</FullClassName>
     <ClientId>23a7b3e3-476a-4295-9e55-e4b05178f101</ClientId>
     <VendorId>com.YOUR COMPANY NAME</VendorId>
     <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
