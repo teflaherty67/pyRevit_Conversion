@@ -14,6 +14,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MessageBox = System.Windows.MessageBox;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using Visibility = System.Windows.Visibility;
 
 namespace pyRevit_Conversion
 {
