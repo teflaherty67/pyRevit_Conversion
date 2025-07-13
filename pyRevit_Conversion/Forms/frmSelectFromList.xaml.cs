@@ -30,6 +30,10 @@ namespace pyRevit_Conversion
         private bool _isRegexMode = false;
         private SelectFromListConfig _config;
 
+        // Add these for sheet filtering
+        private List<ViewSheet> _allSheets;
+        private List<ViewSheetSet> _viewSheetSets;
+
         public List<object> SelectedItems { get; private set; }
         public SelectFromListResult Result { get; private set; }
 
@@ -98,6 +102,13 @@ namespace pyRevit_Conversion
             Title = config.Title;
             select_b.Content = config.ButtonText;
 
+            // Store ViewSheets and ViewSheetSets if this is a sheet selection
+            if (typeof(T) == typeof(ViewSheet))
+            {
+                _allSheets = items.Cast<ViewSheet>().ToList();
+                _viewSheetSets = config.ViewSheetSets ?? new List<ViewSheetSet>();
+            }
+
             // Setup items
             _allItems = new ObservableCollection<SelectableItem>(
                 items.Select(item => new SelectableItem
@@ -136,6 +147,13 @@ namespace pyRevit_Conversion
                 ctx_groups_dock.Visibility = Visibility.Visible;
                 ctx_groups_selector_cb.ItemsSource = _config.SheetSetOptions;
                 ctx_groups_selector_cb.SelectedItem = _config.DefaultSheetSet ?? _config.SheetSetOptions.First();
+
+                // Wire up the selection changed event for sheet filtering
+                ctx_groups_selector_cb.SelectionChanged += OnSheetSetSelectionChanged;
+            }
+            else if (ctx_groups_dock != null)
+            {
+                ctx_groups_dock.Visibility = Visibility.Collapsed;
             }
 
             // Show/hide reset button
@@ -157,7 +175,7 @@ namespace pyRevit_Conversion
 
         private void Search_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == System.Windows.Input.Key.Enter)
             {
                 button_select(sender, e);
             }
@@ -214,6 +232,52 @@ namespace pyRevit_Conversion
         {
             clrsearch_b.Visibility = string.IsNullOrEmpty(search_tb.Text) ?
                 Visibility.Collapsed : Visibility.Visible;
+        }
+
+        // Add this new event handler for sheet set filtering
+        private void OnSheetSetSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_allSheets == null || _viewSheetSets == null) return;
+
+            var selectedSheetSet = ctx_groups_selector_cb.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(selectedSheetSet)) return;
+
+            // Filter sheets based on selected sheet set
+            List<ViewSheet> filteredSheets;
+
+            if (selectedSheetSet == "All Sheets")
+            {
+                filteredSheets = _allSheets;
+            }
+            else
+            {
+                // Find the ViewSheetSet that matches the selected name
+                var targetSheetSet = _viewSheetSets.FirstOrDefault(vss => vss.Name == selectedSheetSet);
+                if (targetSheetSet != null)
+                {
+                    var sheetIdsInSet = targetSheetSet.Views.Cast<ElementId>().ToHashSet();
+                    filteredSheets = _allSheets.Where(sheet => sheetIdsInSet.Contains(sheet.Id)).ToList();
+                }
+                else
+                {
+                    filteredSheets = _allSheets; // Fallback
+                }
+            }
+
+            // Update the items collection with filtered sheets
+            _allItems.Clear();
+            foreach (var sheet in filteredSheets)
+            {
+                _allItems.Add(new SelectableItem
+                {
+                    Item = sheet,
+                    DisplayName = $"{sheet.SheetNumber} - {sheet.Name}",
+                    IsSelected = _config.DefaultSelectAll
+                });
+            }
+
+            // Update the filtered list display
+            UpdateFilteredList();
         }
 
         #endregion
@@ -365,6 +429,9 @@ namespace pyRevit_Conversion
         public string DefaultSheetSet { get; set; }
         public bool DefaultSelectAll { get; set; } = false;
         public bool RequireSelection { get; set; } = true;
+
+        // Add this new property for sheet filtering
+        public List<ViewSheetSet> ViewSheetSets { get; set; } = new List<ViewSheetSet>();
     }
 
     public class SelectFromListResult

@@ -1,4 +1,5 @@
-﻿using pyRevit_Conversion.Classes;
+﻿using Autodesk.Revit.UI;
+using pyRevit_Conversion.Classes;
 using pyRevit_Conversion.Common;
 
 namespace pyRevit_Conversion
@@ -47,6 +48,43 @@ namespace pyRevit_Conversion
 
             // add the print sets to the list
             listSheetSetNames.AddRange(colPrintSets.Select(vss => vss.Name).OrderBy(name => name));
+
+            // configure the form
+            var frmConfig = new SelectFromListConfig
+            {
+                Title = "Select Sheets",
+                ButtonText = "Select",
+                ShowSheetSets = true,
+                SheetSetOptions = listSheetSetNames,
+                DefaultSheetSet = "All Sheets",
+                ViewSheetSets = colPrintSets,
+            };
+
+            // launch the form
+            var frmResult = frmSelectFromList.ShowWithResult
+                (
+                    items: colSheets,
+                    displayNameSelector: sheet => $"{sheet.SheetNumber} - {sheet.Name}",
+                    config: frmConfig
+                );
+
+            // set selection if user made a choice
+            if (frmResult != null && frmResult.DialogResult && frmResult.SelectedItems.Any())
+            {
+                var selectedSheets = frmResult.SelectedItems.Cast<ViewSheet>().ToList();
+
+                // get ElementIds of selected ViewSheets
+                var elementIds = selectedSheets.Select(sheet => sheet.Id).ToList();
+
+                // set the current selection
+                uidoc.Selection.SetElementIds(elementIds);
+
+                // Show confirmation
+                TaskDialog.Show("Selection Complete",
+                    $"Selected {selectedSheets.Count} sheet(s):\n" +
+                    string.Join("\n", selectedSheets.Take(5).Select(s => $"• {s.SheetNumber} - {s.Name}")) +
+                    (selectedSheets.Count > 5 ? $"\n... and {selectedSheets.Count - 5} more" : ""));
+            }
 
             return Result.Succeeded;
         }
