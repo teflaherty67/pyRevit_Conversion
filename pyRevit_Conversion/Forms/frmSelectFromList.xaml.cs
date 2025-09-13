@@ -429,9 +429,9 @@ namespace pyRevit_Conversion
         public string DefaultSheetSet { get; set; }
         public bool DefaultSelectAll { get; set; } = false;
         public bool RequireSelection { get; set; } = true;
-
-        // Add this new property for sheet filtering
         public List<ViewSheetSet> ViewSheetSets { get; set; } = new List<ViewSheetSet>();
+        public bool ShowIncrementInput { get; set; } = false;
+        public string DefaultIncrementValue { get; set; } = "1";
     }
 
     public class SelectFromListResult
@@ -439,6 +439,7 @@ namespace pyRevit_Conversion
         public List<object> SelectedItems { get; set; } = new List<object>();
         public string SelectedSheetSet { get; set; }
         public bool DialogResult { get; set; }
+        public string IncrementValue { get; set; }
     }
 
     #endregion

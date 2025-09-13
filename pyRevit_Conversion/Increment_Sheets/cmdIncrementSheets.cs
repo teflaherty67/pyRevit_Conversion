@@ -13,10 +13,136 @@ namespace pyRevit_Conversion
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document curDoc = uidoc.Document;
 
-            // Your code goes here
+            // get all the sheets in the document
+            List<ViewSheet> allSheets = Utils.GetAndSortAllSheets(curDoc);
+            
+            // if no sheets are found
+            if (!allSheets.Any())
+            {
+                // notify the user
+                Utils.TaskDialogWarning("Lifestyle Design", "Increment Sheet Numbers", "No sheets were found in the current document.");
+
+                // exit the command
+                return Result.Failed;
+            }
+
+            // get the sheet sets from the document
+            List<ViewSheetSet> allPrintSets = Utils.GetAndSortAllPrintSets(curDoc);            
+
+            // create sheet set list with "All Sheets" as the first item
+            List<string> listSheetSetNames = new List<string> { "All Sheets" };
+
+            // add the print sets to the list
+            listSheetSetNames.AddRange(allPrintSets.Select(vss => vss.Name).OrderBy(name => name));
+
+            // configure the form
+            var frmConfig = new SelectFromListConfig
+            {
+                Title = "Increment Sheet Numbers",
+                ButtonText = "Increment",
+                ShowSheetSets = true,
+                SheetSetOptions = listSheetSetNames,
+                DefaultSheetSet = "All Sheets",
+                ViewSheetSets = allPrintSets,
+                ShowIncrementInput = true,
+                DefaultIncrementValue = "1"
+            };
+
+            // launch the form
+            var frmResult = frmSelectFromList.ShowWithResult
+                (
+                    items: allSheets,
+                    displayNameSelector: sheet => $"{sheet.SheetNumber} - {sheet.Name}",
+                    config: frmConfig
+                );
+
+            // process the results if user made a choice
+            if (frmResult != null && frmResult.DialogResult && frmResult.SelectedItems.Any())
+            {
+                var selectedSheets = frmResult.SelectedItems.Cast<ViewSheet>().ToList();
+
+                // get increment value
+                if (int.TryParse(frmResult.IncrementValue, out int incrementValue) && incrementValue > 0)
+                {
+                    // increment the sheet numbers
+                    using (Transaction trans = new Transaction(curDoc, "Increment Sheet Numbers"))
+                    {
+                        trans.Start();
+
+                        foreach (var sheet in selectedSheets)
+                        {
+                            try
+                            {
+                                string currentNumber = sheet.SheetNumber;
+                                string newNumber = IncrementSheetNumber(currentNumber, incrementValue);
+
+                                if (newNumber != currentNumber)
+                                {
+                                    sheet.SheetNumber = newNumber;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                TaskDialog.Show("Warning",
+                                    $"Could not increment sheet {sheet.SheetNumber}: {ex.Message}");
+                            }
+                        }
+
+                        trans.Commit();
+                    }
+
+                    // Show success message
+                    TaskDialog.Show("Success",
+                        $"Incremented {selectedSheets.Count} sheet numbers by {incrementValue}.");
+                }
+                else
+                {
+                    TaskDialog.Show("Error", "Invalid increment value entered.");
+                    return Result.Failed;
+                }
+            }
 
             return Result.Succeeded;
         }
+
+        private string IncrementSheetNumber(string input, int incrementValue)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+
+            string result = input;
+
+            // Look for number at the end of the string
+            int i = input.Length - 1;
+            while (i >= 0 && char.IsDigit(input[i]))
+                i--;
+
+            if (i < input.Length - 1)
+            {
+                // Found numeric suffix
+                string prefix = input.Substring(0, i + 1);
+                string numericPart = input.Substring(i + 1);
+
+                if (int.TryParse(numericPart, out int number))
+                {
+                    int newNumber = number + incrementValue;
+                    if (newNumber >= 0) // Don't allow negative sheet numbers
+                    {
+                        // Preserve leading zeros
+                        string format = new string('0', numericPart.Length);
+                        result = prefix + newNumber.ToString(format);
+                    }
+                }
+            }
+            else
+            {
+                // No numeric suffix found, append the increment value
+                if (incrementValue > 0)
+                    result = input + incrementValue.ToString();
+            }
+
+            return result;
+        }
+
         internal static PushButtonData GetButtonData()
         {
             // use this method to define the properties for this command in the Revit ribbon
