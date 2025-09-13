@@ -255,7 +255,7 @@ namespace pyRevit_Conversion
                 var targetSheetSet = _viewSheetSets.FirstOrDefault(vss => vss.Name == selectedSheetSet);
                 if (targetSheetSet != null)
                 {
-                    var sheetIdsInSet = targetSheetSet.Views.Cast<ElementId>().ToHashSet();
+                    var sheetIdsInSet = targetSheetSet.Views.Cast<ViewSheet>().Select(v => v.Id).ToHashSet();
                     filteredSheets = _allSheets.Where(sheet => sheetIdsInSet.Contains(sheet.Id)).ToList();
                 }
                 else

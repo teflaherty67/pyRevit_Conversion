@@ -77,17 +77,12 @@ namespace pyRevit_Conversion
                 var elementIds = selectedSheets.Select(sheet => sheet.Id).ToList();
 
                 // set the current selection
-                uidoc.Selection.SetElementIds(elementIds);
-
-                // Show confirmation
-                TaskDialog.Show("Selection Complete",
-                    $"Selected {selectedSheets.Count} sheet(s):\n" +
-                    string.Join("\n", selectedSheets.Take(5).Select(s => $"• {s.SheetNumber} - {s.Name}")) +
-                    (selectedSheets.Count > 5 ? $"\n... and {selectedSheets.Count - 5} more" : ""));
+                uidoc.Selection.SetElementIds(elementIds);                
             }
 
             return Result.Succeeded;
         }
+
         internal static PushButtonData GetButtonData()
         {
             // use this method to define the properties for this command in the Revit ribbon
