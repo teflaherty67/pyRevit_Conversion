@@ -64,12 +64,19 @@ namespace pyRevit_Conversion
                 // get increment value
                 if (int.TryParse(frmResult.IncrementValue, out int incrementValue) && incrementValue > 0)
                 {
+                    // Sort sheets in REVERSE numerical order for incrementing
+                    // This prevents conflicts (A3c→A4c, then A2c→A3c, then A1c→A2c)
+                    var sortedSheets = selectedSheets
+                        .OrderByDescending(sheet => ExtractNumericPart(sheet.SheetNumber))
+                        .ThenByDescending(sheet => sheet.SheetNumber)
+                        .ToList();
+
                     // increment the sheet numbers
                     using (Transaction trans = new Transaction(curDoc, "Increment Sheet Numbers"))
                     {
                         trans.Start();
 
-                        foreach (var sheet in selectedSheets)
+                        foreach (var sheet in sortedSheets)
                         {
                             try
                             {
@@ -158,7 +165,34 @@ namespace pyRevit_Conversion
             }
 
             return result;
-        }        
+        }
+
+        private int ExtractNumericPart(string sheetNumber)
+        {
+            if (string.IsNullOrEmpty(sheetNumber)) return 0;
+
+            // Remove letter suffix if it exists
+            string workingString = sheetNumber;
+            if (sheetNumber.Length > 0 && char.IsLetter(sheetNumber[sheetNumber.Length - 1]))
+            {
+                workingString = sheetNumber.Substring(0, sheetNumber.Length - 1);
+            }
+
+            // Find the numeric part at the end
+            int i = workingString.Length - 1;
+            while (i >= 0 && char.IsDigit(workingString[i]))
+                i--;
+
+            if (i < workingString.Length - 1)
+            {
+                string numericPart = workingString.Substring(i + 1);
+                if (int.TryParse(numericPart, out int number))
+                    return number;
+            }
+
+            return 0;
+        }
+
 
         internal static PushButtonData GetButtonData()
         {
