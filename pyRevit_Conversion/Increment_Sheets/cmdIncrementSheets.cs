@@ -111,37 +111,54 @@ namespace pyRevit_Conversion
 
             string result = input;
 
-            // Look for number at the end of the string
-            int i = input.Length - 1;
-            while (i >= 0 && char.IsDigit(input[i]))
+            // Check if last character is a letter (suffix like 'A3s')
+            string letterSuffix = "";
+            string workingString = input;
+
+            if (input.Length > 0 && char.IsLetter(input[input.Length - 1]))
+            {
+                letterSuffix = input.Substring(input.Length - 1);
+                workingString = input.Substring(0, input.Length - 1);
+            }
+
+            // Look for number at the end of the working string
+            int i = workingString.Length - 1;
+            while (i >= 0 && char.IsDigit(workingString[i]))
                 i--;
 
-            if (i < input.Length - 1)
+            if (i < workingString.Length - 1)
             {
-                // Found numeric suffix
-                string prefix = input.Substring(0, i + 1);
-                string numericPart = input.Substring(i + 1);
+                // Found numeric part
+                string prefix = workingString.Substring(0, i + 1);
+                string numericPart = workingString.Substring(i + 1);
 
                 if (int.TryParse(numericPart, out int number))
                 {
                     int newNumber = number + incrementValue;
                     if (newNumber >= 0) // Don't allow negative sheet numbers
                     {
-                        // Preserve leading zeros
-                        string format = new string('0', numericPart.Length);
-                        result = prefix + newNumber.ToString(format);
+                        // Preserve leading zeros if they existed
+                        string format = numericPart.Length > 1 && numericPart.StartsWith("0")
+                            ? new string('0', numericPart.Length)
+                            : "";
+
+                        string formattedNumber = format.Length > 0
+                            ? newNumber.ToString(format)
+                            : newNumber.ToString();
+
+                        result = prefix + formattedNumber + letterSuffix;
                     }
                 }
             }
             else
             {
-                // No numeric suffix found, append the increment value
+                // No numeric part found, append the increment value before any letter suffix
                 if (incrementValue > 0)
-                    result = input + incrementValue.ToString();
+                    result = workingString + incrementValue.ToString() + letterSuffix;
             }
 
             return result;
-        }
+        }        
 
         internal static PushButtonData GetButtonData()
         {

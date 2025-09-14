@@ -161,6 +161,17 @@ namespace pyRevit_Conversion
             {
                 reset_b.Visibility = Visibility.Visible;
             }
+
+            // Show/hide increment input
+            if (_config.ShowIncrementInput)
+            {
+                incrementPanel.Visibility = Visibility.Visible;
+                incrementValue_tb.Text = _config.DefaultIncrementValue ?? "1";
+            }
+            else if (incrementPanel != null)
+            {
+                incrementPanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         #endregion
@@ -362,6 +373,7 @@ namespace pyRevit_Conversion
             {
                 SelectedItems = selectedItems,
                 SelectedSheetSet = ctx_groups_selector_cb.SelectedItem?.ToString(),
+                IncrementValue = incrementValue_tb?.Text, // Add this line
                 DialogResult = true
             };
 
