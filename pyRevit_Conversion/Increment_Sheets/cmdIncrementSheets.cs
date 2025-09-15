@@ -45,7 +45,8 @@ namespace pyRevit_Conversion
                 DefaultSheetSet = "All Sheets",
                 ViewSheetSets = allPrintSets,
                 ShowIncrementInput = true,
-                DefaultIncrementValue = "1"
+                DefaultIncrementValue = "1",
+                IncrementLabel = "Increment by:"
             };
 
             // launch the form

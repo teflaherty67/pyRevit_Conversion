@@ -4,7 +4,7 @@
     <Text>pyRevit_Conversion - Command 1</Text>
     <Description>Some description</Description>
     <Assembly>pyRevit_Conversion\pyRevit_Conversion.dll</Assembly>
-    <FullClassName>pyRevit_Conversion.cmdSelectSheets</FullClassName>
+    <FullClassName>pyRevit_Conversion.cmdIncrementSheets</FullClassName>
     <ClientId>23a7b3e3-476a-4295-9e55-e4b05178f101</ClientId>
     <VendorId>com.YOUR COMPANY NAME</VendorId>
     <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>
@@ -13,7 +13,7 @@
     <Text>pyRevit_Conversion - Command 2</Text>
     <Description>Some description</Description>
     <Assembly>pyRevit_Conversion\pyRevit_Conversion.dll</Assembly>
-    <FullClassName>pyRevit_Conversion.cmdIncrementSheets</FullClassName>
+    <FullClassName>pyRevit_Conversion.cmdDecrementSheets</FullClassName>
     <ClientId>0ce01956-8a57-446f-81ee-2aef07f137e0</ClientId>
     <VendorId>com.YOUR COMPANY NAME</VendorId>
     <VendorDescription>YOUR COMPANY NAME, YOUR COMPANY URL</VendorDescription>

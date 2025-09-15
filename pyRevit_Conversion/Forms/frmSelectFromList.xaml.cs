@@ -167,6 +167,9 @@ namespace pyRevit_Conversion
             {
                 incrementPanel.Visibility = Visibility.Visible;
                 incrementValue_tb.Text = _config.DefaultIncrementValue ?? "1";
+
+                // Update the label text
+                incrementLabel_tb.Text = _config.IncrementLabel ?? "Increment by:";
             }
             else if (incrementPanel != null)
             {
@@ -444,6 +447,7 @@ namespace pyRevit_Conversion
         public List<ViewSheetSet> ViewSheetSets { get; set; } = new List<ViewSheetSet>();
         public bool ShowIncrementInput { get; set; } = false;
         public string DefaultIncrementValue { get; set; } = "1";
+        public string IncrementLabel { get; set; } = "Increment by:";
     }
 
     public class SelectFromListResult
