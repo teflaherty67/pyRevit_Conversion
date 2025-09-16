@@ -49,6 +49,7 @@ namespace pyRevit_Conversion
                 SheetSetOptions = listSheetSetNames,
                 DefaultSheetSet = "All Sheets",
                 ViewSheetSets = allPrintSets,
+                HelpUrl = "https://lifestyle-usa-design.atlassian.net/wiki/spaces/MFS/pages/534183937/Select+Sheets"
             };
 
             // launch the form

@@ -132,7 +132,7 @@ namespace pyRevit_Conversion
             if (!_config.ShowSearch)
             {
                 search_tb.Visibility = Visibility.Collapsed;
-                regexToggle_b.Visibility = Visibility.Collapsed;
+                help_b.Visibility = Visibility.Collapsed;
             }
 
             // Show/hide check buttons
@@ -167,8 +167,6 @@ namespace pyRevit_Conversion
             {
                 incrementPanel.Visibility = Visibility.Visible;
                 incrementValue_tb.Text = _config.DefaultIncrementValue ?? "1";
-
-                // Update the label text
                 incrementLabel_tb.Text = _config.IncrementLabel ?? "Increment by:";
             }
             else if (incrementPanel != null)
@@ -298,21 +296,24 @@ namespace pyRevit_Conversion
 
         #region Button Events
 
-        private void toggle_regex(object sender, RoutedEventArgs e)
+        private void help_button_click(object sender, RoutedEventArgs e)
         {
-            _isRegexMode = regexToggle_b.IsChecked == true;
-
-            // Update button content
-            regexToggle_b.Content = _isRegexMode ?
-                FindResource("regexIcon") :
-                FindResource("filterIcon");
-
-            // Update tooltip
-            regexToggle_b.ToolTip = _isRegexMode ?
-                "Switch to fuzzy filtering" :
-                "Switch to regular expression filtering";
-
-            UpdateFilteredList();
+            if (!string.IsNullOrEmpty(_config.HelpUrl))
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = _config.HelpUrl,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Could not open help page: {ex.Message}", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
         }
 
         private void clear_search(object sender, RoutedEventArgs e)
@@ -448,6 +449,7 @@ namespace pyRevit_Conversion
         public bool ShowIncrementInput { get; set; } = false;
         public string DefaultIncrementValue { get; set; } = "1";
         public string IncrementLabel { get; set; } = "Increment by:";
+        public string HelpUrl { get; set; }
     }
 
     public class SelectFromListResult

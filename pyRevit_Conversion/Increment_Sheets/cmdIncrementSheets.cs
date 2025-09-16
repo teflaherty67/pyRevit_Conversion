@@ -46,7 +46,8 @@ namespace pyRevit_Conversion
                 ViewSheetSets = allPrintSets,
                 ShowIncrementInput = true,
                 DefaultIncrementValue = "1",
-                IncrementLabel = "Increment by:"
+                IncrementLabel = "Increment by:",
+                HelpUrl = "https://lifestyle-usa-design.atlassian.net/wiki/spaces/MFS/pages/534282241/Increment+Sheets"
             };
 
             // launch the form
