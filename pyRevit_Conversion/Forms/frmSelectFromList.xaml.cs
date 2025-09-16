@@ -155,13 +155,7 @@ namespace pyRevit_Conversion
             {
                 ctx_groups_dock.Visibility = Visibility.Collapsed;
             }
-
-            // Show/hide reset button
-            if (_config.ShowResetButton)
-            {
-                reset_b.Visibility = Visibility.Visible;
-            }
-
+            
             // Show/hide increment input
             if (_config.ShowIncrementInput)
             {
@@ -296,7 +290,24 @@ namespace pyRevit_Conversion
 
         #region Button Events
 
-        private void help_button_click(object sender, RoutedEventArgs e)
+        private void switch_filter_mode(object sender, RoutedEventArgs e)
+        {
+            _isRegexMode = filterMode_b.IsChecked == true;
+
+            // Update button content
+            filterMode_b.Content = _isRegexMode ?
+                FindResource("regexIcon") :
+                FindResource("filterIcon");
+
+            // Update tooltip
+            filterMode_b.ToolTip = _isRegexMode ?
+                "Switch to fuzzy filtering" :
+                "Switch to regular expression filtering";
+
+            UpdateFilteredList();
+        }
+
+        private void help_click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(_config.HelpUrl))
             {
@@ -335,29 +346,6 @@ namespace pyRevit_Conversion
             foreach (var item in _filteredItems)
             {
                 item.IsSelected = false;
-            }
-        }
-
-        private void toggle_all(object sender, RoutedEventArgs e)
-        {
-            foreach (var item in _filteredItems)
-            {
-                item.IsSelected = !item.IsSelected;
-            }
-        }
-
-        private void button_reset(object sender, RoutedEventArgs e)
-        {
-            foreach (var item in _allItems)
-            {
-                item.IsSelected = _config.DefaultSelectAll;
-            }
-
-            search_tb.Text = "";
-
-            if (_config.ShowSheetSets && _config.SheetSetOptions?.Any() == true)
-            {
-                ctx_groups_selector_cb.SelectedItem = _config.DefaultSheetSet ?? _config.SheetSetOptions.First();
             }
         }
 
@@ -439,8 +427,7 @@ namespace pyRevit_Conversion
         public string ButtonText { get; set; } = "Select";
         public bool ShowSearch { get; set; } = true;
         public bool ShowCheckButtons { get; set; } = true;
-        public bool ShowSheetSets { get; set; } = false;
-        public bool ShowResetButton { get; set; } = false;
+        public bool ShowSheetSets { get; set; } = false;       
         public List<string> SheetSetOptions { get; set; } = new List<string>();
         public string DefaultSheetSet { get; set; }
         public bool DefaultSelectAll { get; set; } = false;

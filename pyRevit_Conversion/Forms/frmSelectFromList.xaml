@@ -62,28 +62,17 @@
     <DockPanel Margin="10">
         <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10">
             <DockPanel>
-                <!-- Help button (replaces regex toggle) -->
-                <Button x:Name="help_b" ToolTip="Get help for this command"
-                        Width="24" Height="24" Margin="0,0,10,0" 
-                        DockPanel.Dock="Left"
-                        Click="help_button_click">
-                    <Canvas Width="25" Height="25" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Path Canvas.Top="2" Canvas.Left="2" 
-                              Data="M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2ZM13,19H11V17H13V19ZM15.07,11.25L14.17,12.17C13.45,12.9 13,13.5 13,15H11V14.5C11,13.4 11.45,12.4 12.17,11.67L13.41,10.41C13.78,10.05 14,9.55 14,9C14,7.9 13.1,7 12,7C10.9,7 10,7.9 10,9H8C8,6.79 9.79,5 12,5C14.21,5 16,6.79 16,9C16,9.88 15.64,10.68 15.07,11.25Z" 
-                              Fill="DodgerBlue" />
-                    </Canvas>
-                </Button>
-
-                <!-- Search textbox -->
+                <ToggleButton x:Name="filterMode_b" ToolTip="Switch between regular expression and fuzzy filtering"
+                  Content="{StaticResource filterIcon}" Width="24" Height="24" Margin="0,0,10,0" Click="switch_filter_mode" />
                 <StackPanel>
                     <TextBox x:Name="search_tb" Height="25"
-                             Padding="5,0,24,0"
-                             VerticalContentAlignment="Center"/>
+                 Padding="5,0,24,0"
+                 VerticalContentAlignment="Center"/>
                     <Button x:Name="clrsearch_b" Visibility="Collapsed" Margin="0,-25,2,0" Padding="0,-4,0,0"
-                            Width="22px" Height="22px" HorizontalAlignment="Right"
-                            BorderThickness="0"
-                            Style="{StaticResource ClearButton}"
-                            Click="clear_search">
+                Width="22px" Height="22px" HorizontalAlignment="Right"
+                BorderThickness="0"
+                Style="{StaticResource ClearButton}"
+                Click="clear_search">
                         <Button.Content>
                             <Canvas Width="25" Height="25" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Path Canvas.Top="3" Canvas.Left="1" Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="DimGray" />
@@ -102,8 +91,8 @@
         </StackPanel>
 
         <StackPanel DockPanel.Dock="Bottom">
-            <!-- Check/Uncheck/Toggle buttons row -->
-            <Grid x:Name="checkboxbuttons_g" Height="35" Margin="0,10,0,0">
+            <!-- Check/Uncheck/Help buttons row -->
+            <Grid x:Name="checkboxbuttons_g" Height="30" Margin="0,10,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -123,41 +112,34 @@
                         Content="Uncheck" Click="uncheck_all"
                         VerticalAlignment="Center"
                         Margin="3,0,3,0"/>
-                <Button x:Name="toggleall_b" Height="25"
+                <Button x:Name="help_b" Height="25"
                         Grid.Column="2" Grid.Row="0"
-                        Content="Toggle" Click="toggle_all"
+                        Content="Help" Click="help_click"
                         VerticalAlignment="Center"
-                        Margin="3,0,0,0"/>
-                <Button x:Name="reset_b"
-                        Height="25" Width="100"
-                        Grid.Column="3" Grid.Row="0"
-                        Visibility="Collapsed"
-                        Content="Reset" Click="button_reset"
-                        VerticalAlignment="Center"
-                        Margin="3,0,0,0"/>
+                        Margin="3,0,0,0"/>                
             </Grid>
 
             <!-- Main button row with increment input -->
-            <Grid x:Name="bottomButtonGrid" Height="35" Margin="0,5,0,0">
+            <Grid x:Name="bottomButtonGrid" Height="30" Margin="0,5,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Main action button -->
-                <Button x:Name="select_b" Content="" Height="25" Click="button_select" 
-                        Grid.Column="0" VerticalAlignment="Center"/>
-
-                <!-- Increment input panel -->
-                <StackPanel x:Name="incrementPanel" Grid.Column="1" Orientation="Horizontal" 
-                            Margin="10,0,0,0" VerticalAlignment="Center" Visibility="Collapsed">
+                <!-- Increment input panel (moved to left side) -->
+                <StackPanel x:Name="incrementPanel" Grid.Column="0" Orientation="Horizontal" 
+                Margin="0,0,10,0" VerticalAlignment="Center" Visibility="Collapsed">
                     <TextBlock x:Name="incrementLabel_tb" Text="Increment by:" 
-                               VerticalAlignment="Center" Margin="0,0,5,0" FontSize="12"/>
+                   VerticalAlignment="Center" Margin="0,0,5,0" FontSize="12"/>
                     <TextBox x:Name="incrementValue_tb" 
-                             Width="50" Height="25" 
-                             VerticalContentAlignment="Center" 
-                             TextAlignment="Center" Text="1"/>
+                 Width="50" Height="25" 
+                 VerticalContentAlignment="Center" 
+                 TextAlignment="Center" Text="1"/>
                 </StackPanel>
+
+                <!-- Main action button (moved to right side) -->
+                <Button x:Name="select_b" Content="" Height="25" Click="button_select" 
+            Grid.Column="1" VerticalAlignment="Center"/>
             </Grid>
         </StackPanel>
 
