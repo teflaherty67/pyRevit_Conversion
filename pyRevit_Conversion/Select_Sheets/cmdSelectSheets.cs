@@ -15,29 +15,20 @@ namespace pyRevit_Conversion
             Document curDoc = uidoc.Document;
 
             // get all the sheets in the document
-            List<ViewSheet> colSheets = new FilteredElementCollector(curDoc)
-                .OfClass(typeof(ViewSheet))
-                .Cast<ViewSheet>()
-                .OrderBy(s => s.SheetNumber)
-                .ToList();
+            List<ViewSheet> allSheets = Utils.GetAndSortAllSheets(curDoc);
 
-            if (!colSheets.Any())
+            // if no sheets are found
+            if (!allSheets.Any())
             {
-                // if no sheets are found, alert the user & exit
-                TaskDialog tdNoSheets = new TaskDialog("Empty");
-                tdNoSheets.MainIcon = Icon.TaskDialogIconWarning;
-                tdNoSheets.Title = "Select Sheets";
-                tdNoSheets.TitleAutoPrefix = false;
-                tdNoSheets.MainContent = "No sheets were found in the current document";
-                tdNoSheets.CommonButtons = TaskDialogCommonButtons.Close;
+                // notify the user
+                Utils.TaskDialogWarning("Lifestyle Design", "Increment Sheet Numbers", "No sheets were found in the current document.");
 
-                TaskDialogResult tdNoSheetsRes = tdNoSheets.Show();
-               
+                // exit the command
                 return Result.Failed;
             }
 
             // get the print sets from the document
-            List<ViewSheetSet> colPrintSets = new FilteredElementCollector(curDoc)
+            List<ViewSheetSet> allPrintSets = new FilteredElementCollector(curDoc)
                 .OfClass(typeof(ViewSheetSet))
                 .Cast<ViewSheetSet>()
                 .OrderBy(vss => vss.Name)
@@ -47,7 +38,7 @@ namespace pyRevit_Conversion
             List<string> listSheetSetNames = new List<string> { "All Sheets" };
 
             // add the print sets to the list
-            listSheetSetNames.AddRange(colPrintSets.Select(vss => vss.Name).OrderBy(name => name));
+            listSheetSetNames.AddRange(allPrintSets.Select(vss => vss.Name).OrderBy(name => name));
 
             // configure the form
             var frmConfig = new SelectFromListConfig
@@ -57,13 +48,13 @@ namespace pyRevit_Conversion
                 ShowSheetSets = true,
                 SheetSetOptions = listSheetSetNames,
                 DefaultSheetSet = "All Sheets",
-                ViewSheetSets = colPrintSets,
+                ViewSheetSets = allPrintSets,
             };
 
             // launch the form
             var frmResult = frmSelectFromList.ShowWithResult
                 (
-                    items: colSheets,
+                    items: allSheets,
                     displayNameSelector: sheet => $"{sheet.SheetNumber} - {sheet.Name}",
                     config: frmConfig
                 );
